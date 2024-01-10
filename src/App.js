@@ -1,24 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LoginForm from "./components/LoginForm";
+import SignupForm from "./components/SignupForm";
+import Home from "./components/Home"; // Example component for authenticated user's home page
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/signup" element={<SignupForm />} />
+        {/* Example route for authenticated user's home page */}
+        <Route path="/home" element={<Home />} />
+        {/* Add more routes for different pages/components */}
+        {/* Default route or 404 not found */}
+        <Route path="/" element={<LoginForm />} /> {/* Render login form as default */}
+      </Routes>
+    </Router>
   );
 }
 
