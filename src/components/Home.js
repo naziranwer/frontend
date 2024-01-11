@@ -7,6 +7,7 @@ function Home() {
   const [lists, setLists] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [newListName, setNewListName] = useState('');
+  const [targetId,setTargetList]=useState(null);
   
 
   const user = JSON.parse(localStorage.getItem('user'));
@@ -61,7 +62,9 @@ function Home() {
 
   const handleDrop = (e, targetListId) => {
     e.preventDefault();
+    setTargetList(targetListId);
     console.log("drop event occured");
+    console.log("target list id",targetListId);
 
 
     const taskId = e.dataTransfer.getData('text/plain');
@@ -78,10 +81,11 @@ function Home() {
         if (!response.ok) {
           throw new Error('Failed to update task list');
         }
-        fetchdata();
-        // return response.json();
+        // fetchdata();
+        return response.json();
       })
-      // .then(() => {
+      .then(() => {
+        // fetchdata();
       //   // Implement logic to fetch updated lists from the backend and update the state
       //   fetch(`http://localhost:3000/tasks/${listId}/tasks`)
       //     .then((response) => response.json())
@@ -91,7 +95,7 @@ function Home() {
             
       //     })
       //     .catch((error) => console.error('Error fetching lists:', error));
-      // })
+      })
       .catch((error) => {
         console.error('Error updating task list:', error);
       });
@@ -108,7 +112,8 @@ function Home() {
             {lists?.map((list) => (
               <TaskList key={list.id} list={list}
               onDragOver={handleDragOver}
-              onDrop={(e) => handleDrop(e, list.id)}/>
+              onDrop={(e) => handleDrop(e, list.id)}
+              targetId={targetId}/>
             ))}
           </div>
         </div>

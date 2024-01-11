@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
-const TaskList = ({ list,onDragOver, onDrop }) => {
+const TaskList = ({ list,onDragOver, onDrop,targetId }) => {
   const [tasks, setTasks] = useState([]);
   const [newTaskName, setNewTaskName] = useState('');
   const [showInput, setShowInput] = useState(false);
-
+  
+  console.log('list id in tasklist',list.id);
   const fetchTasks=()=>{
     fetch(`http://localhost:3000/tasks/${list.id}/tasks`)
       .then((response) => response.json())
@@ -19,7 +20,7 @@ const TaskList = ({ list,onDragOver, onDrop }) => {
     //   .then((data) => setTasks(data))
     //   .catch((error) => console.error('Error fetching tasks:', error));
     fetchTasks();
-  }, [list.id]);
+  }, [list.id,targetId]);
  
   
 
