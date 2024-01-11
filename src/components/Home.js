@@ -44,6 +44,44 @@ function Home() {
       });
   };
 
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    console.log("drag over");
+  };
+
+  const handleDrop = (e, targetListId) => {
+    e.preventDefault();
+    console.log("drop event occured");
+    
+
+    const taskId = e.dataTransfer.getData('text/plain');
+
+    // Implement logic to update the task with taskId to the targetListId
+    fetch(`http://localhost:3000/tasks/tasks/${taskId}/move`, {
+      method: 'PUT',
+      body: JSON.stringify({ newListId: targetListId }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to update task list');
+        }
+        return response.json();
+      })
+      .then(() => {
+        // Implement logic to fetch updated lists from the backend and update the state
+        fetch(`http://localhost:3000/lists/lists/${userId}`)
+          .then((response) => response.json())
+          .then((data) => setLists(data))
+          .catch((error) => console.error('Error fetching lists:', error));
+      })
+      .catch((error) => {
+        console.error('Error updating task list:', error);
+      });
+  };
+
   return (
     <div className="container mx-auto p-4 flex flex-col items-center">
       <h1 className="text-3xl font-semibold mb-4">Task Board</h1>
@@ -51,7 +89,9 @@ function Home() {
         <div className="lists-container overflow-x-auto" >
           <div className="flex space-x-4 pb-4">
             {lists?.map((list) => (
-              <TaskList key={list.id} list={list} />
+              <TaskList key={list.id} list={list}
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, list.id)}/>
             ))}
           </div>
         </div>

@@ -1,96 +1,95 @@
 import React, { useState, useEffect } from 'react';
-import TaskList from './TaskList';
 
-function Home() {
-  const [lists, setLists] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [newListName, setNewListName] = useState('');
-
-  const user = JSON.parse(localStorage.getItem('user'));
-  const userId = user?.id;
+const TaskList = ({ list,onDragOver, onDrop }) => {
+  const [tasks, setTasks] = useState([]);
+  const [newTaskName, setNewTaskName] = useState('');
+  const [showInput, setShowInput] = useState(false);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/lists/lists/${userId}`)
+    // Fetch tasks based on the list ID from the backend API
+    fetch(`http://localhost:3000/tasks/${list.id}/tasks`)
       .then((response) => response.json())
-      .then((data) => setLists(data))
-      .catch((error) => console.error('Error fetching lists:', error));
-  }, [userId]);
+      .then((data) => setTasks(data))
+      .catch((error) => console.error('Error fetching tasks:', error));
+  }, [list.id]);
 
-  const addList = () => {
-    setShowModal(true);
+  const addNewTask = () => {
+    setShowInput(true);
   };
 
   const handleSubmit = () => {
-    fetch('http://localhost:3000/lists/lists', {
+    // Implement logic to add a new task to the backend using newTaskName
+    fetch(`http://localhost:3000/tasks/${list.id}/tasks`, {
       method: 'POST',
-      body: JSON.stringify({ userId: userId, listName: newListName }),
+      body: JSON.stringify({ taskName: newTaskName }),
       headers: {
         'Content-Type': 'application/json',
       },
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error('Failed to add list');
+          throw new Error('Failed to add task');
         }
         return response.json();
       })
       .then((data) => {
-        setLists([...lists, data]);
-        setShowModal(false);
-        setNewListName('');
+        setTasks([...tasks, data]); // Add the new task to the existing tasks state
+        setNewTaskName('');
+        setShowInput(false);
       })
       .catch((error) => {
-        console.error('Error adding list:', error);
+        console.error('Error adding task:', error);
       });
+
+    setShowInput(false);
   };
 
+  const handleDragStart = (e, taskId) => {
+    console.log("drag start");
+    e.dataTransfer.setData('text/plain', taskId);
+  };
   return (
-    <div className="container mx-auto p-4 flex flex-col items-center">
-      <h1 className="text-3xl font-semibold mb-4">Task Board</h1>
-      <div className="flex justify-center">
-        <div className="lists-container overflow-x-auto" style={{ maxWidth: '90vw' }}>
-          <div className="flex space-x-4 pb-4">
-            {lists?.map((list) => (
-              <TaskList key={list.id} list={list} />
-            ))}
-          </div>
+    <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white"
+    onDragOver={onDragOver}  
+      onDrop={(e) => onDrop(e, list.id)} >
+      <div className="px-6 py-4">
+        <div className="flex justify-between items-center mb-4">
+          <div className="font-bold text-xl">{list.list_name}</div>
+          <button
+            onClick={addNewTask}
+            className="bg-blue-500 hover:bg-blue-700 text-white  py-2 px-4 rounded"
+          >
+            + Add Task
+          </button>
         </div>
-      </div>
-      <div className="flex justify-center mt-4">
-        <button
-          className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 focus:outline-none border-r-50"
-          onClick={addList}
-        >
-          + Create New List
-        </button>
-        {showModal && (
-          <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-4 rounded">
-              <input
-                type="text"
-                value={newListName}
-                onChange={(e) => setNewListName(e.target.value)}
-                placeholder="Enter list name"
-                className="border border-gray-300 rounded p-2 mb-2"
-              />
-              <button
-                onClick={handleSubmit}
-                className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 focus:outline-none"
-              >
-                Submit
-              </button>
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 focus:outline-none ml-2"
-              >
-                Cancel
-              </button>
-            </div>
+        <ul>
+          {/* Render each task */}
+          {tasks.map((task) => (
+            <li key={task.id} className="mb-2" onDragStart={(e)=>handleDragStart(e,task.id)} draggable='true'>
+              {task.task_name}
+            </li>
+          ))}
+        </ul>
+        {showInput && (
+          <div className="mt-4">
+            <input
+              type="text"
+              value={newTaskName}
+              onChange={(e) => setNewTaskName(e.target.value)}
+              placeholder="Enter task name"
+              className="border border-gray-300 rounded p-2"
+            />
+            <button
+              onClick={handleSubmit}
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded ml-2"
+            >
+              Add
+            </button>
           </div>
         )}
       </div>
     </div>
   );
-}
+};
 
-export default Home;
+export default TaskList;
