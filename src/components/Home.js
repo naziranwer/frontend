@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import TaskList from './TaskList';
+import Navbar from './Navbar';
+import Footer from './Footer';
 
 function Home() {
   const [lists, setLists] = useState([]);
@@ -99,6 +101,8 @@ function Home() {
   };
 
   return (
+    <>
+    <Navbar/>
     <div className="container mx-auto p-4 flex flex-col items-center">
       <h1 className="text-3xl font-semibold mb-4">Task Board</h1>
       <div className="flex justify-center">
@@ -146,6 +150,8 @@ function Home() {
         )}
       </div>
     </div>
+    <Footer/>
+    </>
   );
 }
 
