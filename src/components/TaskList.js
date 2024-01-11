@@ -65,48 +65,122 @@ const TaskList = ({ list,onDragOver, onDrop }) => {
     console.log("drag start");
     e.dataTransfer.setData('text/plain', taskId);
   };
+
+  const handleCheckboxChange = (taskId) => {
+    // Implement logic to complete the task on the backend
+    fetch(`http://localhost:3000/tasks/tasks/${taskId}/complete`, {
+      method: 'PUT',
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to complete task');
+        }
+        return response.json();
+      })
+      .then((completedTask) => {
+        // Update the UI to reflect the completed task
+        setTasks((prevTasks) =>
+          prevTasks.map((task) =>
+            task.id === completedTask.id ? completedTask : task
+          )
+        );
+      })
+      .catch((error) => {
+        console.error('Error completing task:', error);
+      });
+  };
+
   return (
-    <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white"
-    onDragOver={onDragOver}  
-      onDrop={(e) => onDrop(e, list.id)} >
-      <div className="px-6 py-4">
-        <div className="flex justify-between items-center mb-4">
-          <div className="font-bold text-xl">{list.list_name}</div>
+    // <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white"
+    // onDragOver={onDragOver}  
+    //   onDrop={(e) => onDrop(e, list.id)} >
+    //   <div className="px-6 py-4">
+    //     <div className="flex justify-between items-center mb-4">
+    //       <div className="font-bold text-xl">{list.list_name}</div>
+    //       <button
+    //         onClick={addNewTask}
+    //         className="bg-blue-500 hover:bg-blue-700 text-white  py-2 px-4 rounded"
+    //       >
+    //         + Add Task
+    //       </button>
+    //     </div>
+    //     <ul>
+    //       {/* Render each task */}
+    //       {tasks.map((task) => (
+    //         <li key={task.id} className="mb-2" onDragStart={(e)=>handleDragStart(e,task.id)} draggable='true'>
+    //           <input
+    //             type="checkbox"
+    //             checked={task.completed}
+    //             onChange={() => handleCheckboxChange(task.id)}
+    //           />
+    //           {task.task_name}
+    //         </li>
+    //       ))}
+    //     </ul>
+    //     {showInput && (
+    //       <div className="mt-4">
+    //         <input
+    //           type="text"
+    //           value={newTaskName}
+    //           onChange={(e) => setNewTaskName(e.target.value)}
+    //           placeholder="Enter task name"
+    //           className="border border-gray-300 rounded p-2"
+    //         />
+    //         <button
+    //           onClick={handleSubmit}
+    //           className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded ml-2"
+    //         >
+    //           Add
+    //         </button>
+    //       </div>
+    //     )}
+    //   </div>
+    // </div>
+
+    <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white" onDragOver={onDragOver} onDrop={(e) => onDrop(e, list.id)}>
+    <div className="px-6 py-4">
+      <div className="font-bold text-xl mb-2">{list.list_name}</div>
+      <ul>
+        {/* Render each task */}
+        {tasks.map((task) => (
+          <li key={task.id} className="mb-2" onDragStart={(e)=>handleDragStart(e,task.id)} draggable='true'>
+            <input
+              type="checkbox"
+              checked={task.completed}
+              onChange={() => handleCheckboxChange(task.id)}
+            />
+            {task.task_name}
+          </li>
+        ))}
+      </ul>
+      {showInput && (
+        <div className="mt-4">
+          <input
+            type="text"
+            value={newTaskName}
+            onChange={(e) => setNewTaskName(e.target.value)}
+            placeholder="Enter task name"
+            className="border border-gray-300 rounded p-2"
+          />
           <button
-            onClick={addNewTask}
-            className="bg-blue-500 hover:bg-blue-700 text-white  py-2 px-4 rounded"
+            onClick={handleSubmit}
+            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full mt-2"
           >
-            + Add Task
+            Add Task
           </button>
         </div>
-        <ul>
-          {/* Render each task */}
-          {tasks.map((task) => (
-            <li key={task.id} className="mb-2" onDragStart={(e)=>handleDragStart(e,task.id)} draggable='true'>
-              {task.task_name}
-            </li>
-          ))}
-        </ul>
-        {showInput && (
-          <div className="mt-4">
-            <input
-              type="text"
-              value={newTaskName}
-              onChange={(e) => setNewTaskName(e.target.value)}
-              placeholder="Enter task name"
-              className="border border-gray-300 rounded p-2"
-            />
-            <button
-              onClick={handleSubmit}
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded ml-2"
-            >
-              Add
-            </button>
-          </div>
-        )}
-      </div>
+      )}
+      {!showInput && (
+        <button
+          onClick={addNewTask}
+          className="bg-gray-400 hover:bg-blue-700 text-white py-2 px-4 rounded-full mt-2"
+        >
+          + 
+        </button>
+      )}
     </div>
-  );
+  </div>
+);
 };
 
 export default TaskList;
