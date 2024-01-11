@@ -5,6 +5,7 @@ function Home() {
   const [lists, setLists] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [newListName, setNewListName] = useState('');
+  
 
   const user = JSON.parse(localStorage.getItem('user'));
   const userId = user?.id;
@@ -52,7 +53,7 @@ function Home() {
   const handleDrop = (e, targetListId) => {
     e.preventDefault();
     console.log("drop event occured");
-    
+
 
     const taskId = e.dataTransfer.getData('text/plain');
 
@@ -74,7 +75,11 @@ function Home() {
         // Implement logic to fetch updated lists from the backend and update the state
         fetch(`http://localhost:3000/lists/lists/${userId}`)
           .then((response) => response.json())
-          .then((data) => setLists(data))
+          .then((data) => {
+            setLists(data);
+            console.log("re render in home done");
+            
+          })
           .catch((error) => console.error('Error fetching lists:', error));
       })
       .catch((error) => {
