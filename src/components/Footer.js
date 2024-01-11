@@ -46,7 +46,7 @@ const Footer = () => {
           <span className="block text-sm text-gray-500 sm:text-center dark:text-gray-400">
             © 2023{" "}
             <a href="#" className="hover:underline">
-              Flowbite™
+              TodoCanvas™
             </a>
             . All Rights Reserved.
           </span>
