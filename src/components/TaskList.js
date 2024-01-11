@@ -5,18 +5,35 @@ const TaskList = ({ list,onDragOver, onDrop }) => {
   const [newTaskName, setNewTaskName] = useState('');
   const [showInput, setShowInput] = useState(false);
 
-  useEffect(() => {
-    // Fetch tasks based on the list ID from the backend API
+  const fetchdata=()=>{
     fetch(`http://localhost:3000/tasks/${list.id}/tasks`)
       .then((response) => response.json())
       .then((data) => setTasks(data))
       .catch((error) => console.error('Error fetching tasks:', error));
+  }
+  // fetchdata();
+  useEffect(() => {
+    // Fetch tasks based on the list ID from the backend API
+    // fetch(`http://localhost:3000/tasks/${list.id}/tasks`)
+    //   .then((response) => response.json())
+    //   .then((data) => setTasks(data))
+    //   .catch((error) => console.error('Error fetching tasks:', error));
+    fetchdata();
   }, [list.id]);
+ 
+  useEffect(() => {
+    // Fetch tasks based on the list ID from the backend API
+    console.log("useEffect called inside tsalist");
+    fetch(`http://localhost:3000/tasks/${list.id}/tasks`)
+      .then((response) => response.json())
+      .then((data) => setTasks(data))
+      .catch((error) => console.error('Error fetching tasks:', error));
+  }, []);
 
   const addNewTask = () => {
     setShowInput(true);
   };
-
+  console.log("tasklist rendered");
   const handleSubmit = () => {
     // Implement logic to add a new task to the backend using newTaskName
     fetch(`http://localhost:3000/tasks/${list.id}/tasks`, {

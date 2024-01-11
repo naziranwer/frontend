@@ -9,12 +9,22 @@ function Home() {
 
   const user = JSON.parse(localStorage.getItem('user'));
   const userId = user?.id;
-
-  useEffect(() => {
+  console.log("current lis",lists);
+  function fetchdata(){
+    console.log("fetch called");
     fetch(`http://localhost:3000/lists/lists/${userId}`)
       .then((response) => response.json())
-      .then((data) => setLists(data))
+      .then((data) => setLists((prev)=>{
+        return data;
+      }))
       .catch((error) => console.error('Error fetching lists:', error));
+  }
+  useEffect(() => {
+    // fetch(`http://localhost:3000/lists/lists/${userId}`)
+    //   .then((response) => response.json())
+    //   .then((data) => setLists(data))
+    //   .catch((error) => console.error('Error fetching lists:', error));
+    fetchdata();
   }, [userId]);
 
   const addList = () => {
@@ -69,19 +79,20 @@ function Home() {
         if (!response.ok) {
           throw new Error('Failed to update task list');
         }
-        return response.json();
+        fetchdata();
+        // return response.json();
       })
-      .then(() => {
-        // Implement logic to fetch updated lists from the backend and update the state
-        fetch(`http://localhost:3000/lists/lists/${userId}`)
-          .then((response) => response.json())
-          .then((data) => {
-            setLists(data);
-            console.log("re render in home done");
+      // .then(() => {
+      //   // Implement logic to fetch updated lists from the backend and update the state
+      //   fetch(`http://localhost:3000/tasks/${listId}/tasks`)
+      //     .then((response) => response.json())
+      //     .then((data) => {
+      //       setLists(data);
+      //       console.log("re render in home done");
             
-          })
-          .catch((error) => console.error('Error fetching lists:', error));
-      })
+      //     })
+      //     .catch((error) => console.error('Error fetching lists:', error));
+      // })
       .catch((error) => {
         console.error('Error updating task list:', error);
       });
