@@ -5,30 +5,23 @@ const TaskList = ({ list,onDragOver, onDrop }) => {
   const [newTaskName, setNewTaskName] = useState('');
   const [showInput, setShowInput] = useState(false);
 
-  const fetchdata=()=>{
+  const fetchTasks=()=>{
     fetch(`http://localhost:3000/tasks/${list.id}/tasks`)
       .then((response) => response.json())
       .then((data) => setTasks(data))
       .catch((error) => console.error('Error fetching tasks:', error));
   }
-  // fetchdata();
+  // fetchTasks();
   useEffect(() => {
     // Fetch tasks based on the list ID from the backend API
     // fetch(`http://localhost:3000/tasks/${list.id}/tasks`)
     //   .then((response) => response.json())
     //   .then((data) => setTasks(data))
     //   .catch((error) => console.error('Error fetching tasks:', error));
-    fetchdata();
+    fetchTasks();
   }, [list.id]);
  
-  useEffect(() => {
-    // Fetch tasks based on the list ID from the backend API
-    console.log("useEffect called inside tsalist");
-    fetch(`http://localhost:3000/tasks/${list.id}/tasks`)
-      .then((response) => response.json())
-      .then((data) => setTasks(data))
-      .catch((error) => console.error('Error fetching tasks:', error));
-  }, []);
+  
 
   const addNewTask = () => {
     setShowInput(true);
@@ -54,9 +47,10 @@ const TaskList = ({ list,onDragOver, onDrop }) => {
         return response.json();
       })
       .then((data) => {
-        setTasks([...tasks, data]); // Add the new task to the existing tasks state
+        // setTasks([...tasks, data]); // Add the new task to the existing tasks state
         setNewTaskName('');
         setShowInput(false);
+        fetchTasks();
       })
       .catch((error) => {
         console.error('Error adding task:', error);
@@ -81,13 +75,14 @@ const TaskList = ({ list,onDragOver, onDrop }) => {
         }
         return response.json();
       })
-      .then((completedTask) => {
+      .then(() => {
         // Update the UI to reflect the completed task
-        setTasks((prevTasks) =>
-          prevTasks.map((task) =>
-            task.id === completedTask.id ? completedTask : task
-          )
-        );
+        // setTasks((prevTasks) =>
+        //   prevTasks.map((task) =>
+        //     task.id === completedTask.id ? completedTask : task
+        //   )
+        // );
+        fetchTasks();
       })
       .catch((error) => {
         console.error('Error completing task:', error);
@@ -95,7 +90,7 @@ const TaskList = ({ list,onDragOver, onDrop }) => {
   };
 
   return (
-    <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white" onDragOver={onDragOver} onDrop={(e) => onDrop(e, list.id)}>
+    <div className="max-w-sm rounded overflow-hidden shadow-lg bg-gray-100" onDragOver={onDragOver} onDrop={(e) => onDrop(e, list.id)}>
     <div className="px-6 py-4">
       <div className="font-bold text-xl mb-2">{list.list_name}</div>
       <ul>
@@ -142,3 +137,7 @@ const TaskList = ({ list,onDragOver, onDrop }) => {
 };
 
 export default TaskList;
+
+
+
+

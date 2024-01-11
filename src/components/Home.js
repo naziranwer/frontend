@@ -11,21 +11,17 @@ function Home() {
 
   const user = JSON.parse(localStorage.getItem('user'));
   const userId = user?.id;
-  console.log("current lis",lists);
+  console.log("current list",lists);
+
   function fetchdata(){
     console.log("fetch called");
     fetch(`http://localhost:3000/lists/lists/${userId}`)
       .then((response) => response.json())
-      .then((data) => setLists((prev)=>{
-        return data;
-      }))
+      .then((data) => setLists(data))
       .catch((error) => console.error('Error fetching lists:', error));
   }
+
   useEffect(() => {
-    // fetch(`http://localhost:3000/lists/lists/${userId}`)
-    //   .then((response) => response.json())
-    //   .then((data) => setLists(data))
-    //   .catch((error) => console.error('Error fetching lists:', error));
     fetchdata();
   }, [userId]);
 
@@ -48,9 +44,10 @@ function Home() {
         return response.json();
       })
       .then((data) => {
-        setLists([...lists, data]);
+        // setLists([...lists, data]);
         setShowModal(false);
         setNewListName('');
+        fetchdata();
       })
       .catch((error) => {
         console.error('Error adding list:', error);
