@@ -20,7 +20,7 @@ const TaskList = ({ list,onDragOver, onDrop,targetId }) => {
     //   .then((data) => setTasks(data))
     //   .catch((error) => console.error('Error fetching tasks:', error));
     fetchTasks();
-  }, [list.id,targetId]);
+  }, [list.id,targetId ]);
  
   
 
@@ -97,7 +97,7 @@ const TaskList = ({ list,onDragOver, onDrop,targetId }) => {
       <ul>
         {/* Render each task */}
         {tasks.map((task) => (
-          <li key={task.id} className="mb-2" onDragStart={(e)=>handleDragStart(e,task.id)} draggable='true'>
+          <li key={task.id} className="mb-2" onDragStart={(e)=>handleDragStart(e,task.id)} draggable='true' style={{cursor:'pointer'}}>
             <input
               type="checkbox"
               checked={task.completed}

@@ -102,7 +102,7 @@ function Home() {
   };
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection:"column",minHeight:"100vh"}}>
     <Navbar/>
     <div className="container mx-auto p-4 flex flex-col items-center">
       <h1 className="text-3xl font-semibold mb-4">Task Board</h1>
@@ -153,7 +153,7 @@ function Home() {
       </div>
     </div>
     <Footer/>
-    </>
+    </div>
   );
 }
 
